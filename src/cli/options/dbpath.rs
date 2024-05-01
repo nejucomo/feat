@@ -1,4 +1,8 @@
-use std::{fmt::Display, path::PathBuf, str::FromStr};
+use std::{
+    fmt::Display,
+    path::{Path, PathBuf},
+    str::FromStr,
+};
 
 #[derive(Clone, Debug)]
 pub struct DbPath(PathBuf);
@@ -25,5 +29,11 @@ impl FromStr for DbPath {
 impl Display for DbPath {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.display().fmt(f)
+    }
+}
+
+impl AsRef<Path> for DbPath {
+    fn as_ref(&self) -> &Path {
+        self.0.as_ref()
     }
 }

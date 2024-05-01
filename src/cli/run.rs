@@ -1,11 +1,14 @@
-use std::error::Error;
+use error_report::{Ref, Report};
 
-use error_report::Report;
+use crate::{cli::options::Options, db::FeatDb};
 
-use crate::cli::options::Options;
+pub fn run() -> Result<(), Report<Ref<anyhow::Error>>> {
+    run_inner().map_err(Report::from)
+}
 
-pub fn run() -> Result<(), Report<impl Error>> {
+fn run_inner() -> anyhow::Result<()> {
     let options = Options::parse();
-    dbg!(options);
-    Ok::<_, Report<std::io::Error>>(())
+    let db = FeatDb::open_or_init(options.dbpath)?;
+    dbg!(db);
+    Ok(())
 }
