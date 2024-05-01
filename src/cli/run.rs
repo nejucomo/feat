@@ -2,7 +2,10 @@ use std::error::Error;
 
 use error_report::Report;
 
+use crate::cli::options::Options;
+
 pub fn run() -> Result<(), Report<impl Error>> {
-    Err(std::io::Error::new(std::io::ErrorKind::Other, "whoop!"))?;
-    Ok(())
+    let options = Options::parse();
+    dbg!(options);
+    Ok::<_, Report<std::io::Error>>(())
 }
