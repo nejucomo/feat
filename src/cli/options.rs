@@ -1,9 +1,17 @@
+mod dbpath;
+
 use clap::{Args, Parser, Subcommand};
+
+pub use self::dbpath::DbPath;
 
 /// Simple program to greet a person
 #[derive(Debug, Parser)]
 #[command(version, about, long_about = None)]
 pub struct Options {
+    /// The database path
+    #[clap(short, long, default_value_t)]
+    pub dbpath: DbPath,
+
     #[clap(subcommand)]
     pub command: Command,
 }
