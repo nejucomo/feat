@@ -17,15 +17,15 @@ impl Options {
 #[derive(Debug, Subcommand)]
 pub enum Command {
     #[clap(subcommand)]
-    Task(TaskCommand),
+    Task(CommandTask),
 }
 
 #[derive(Debug, Subcommand)]
-pub enum TaskCommand {
-    Create(CreateTaskCommand),
+pub enum CommandTask {
+    New(CommandTaskNew),
 }
 
 #[derive(Debug, Args)]
-pub struct CreateTaskCommand {
+pub struct CommandTaskNew {
     pub title: String,
 }
