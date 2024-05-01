@@ -9,6 +9,8 @@ anyhow = "1.0.82"
 anyhow-std = "0.1.4"
 clap = { version = "4.5.4", features = ["derive"] }
 dirs = "5.0.1"
+env_logger = "0.11.3"
 error-report = "0.0.1"
+log = "0.4.21"
 rusqlite = { version = "0.31.0", features = ["bundled"] }
 rusqlite_migration = { version = "1.2.0", features = ["from-directory"] }
