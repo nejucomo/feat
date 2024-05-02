@@ -1,6 +1,10 @@
 mod dbpath;
 
+use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
+
+use crate::cli::RunWithDb;
+use crate::db::FeatDb;
 
 pub use self::dbpath::DbPath;
 
@@ -19,6 +23,11 @@ pub struct Options {
 impl Options {
     pub fn parse() -> Self {
         <Self as Parser>::parse()
+    }
+
+    pub fn run(self) -> Result<()> {
+        let db = FeatDb::open_or_init(&self.dbpath)?;
+        self.command.run_with_db(db)
     }
 }
 
