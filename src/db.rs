@@ -38,6 +38,10 @@ fn migrate(conn: &mut Connection) -> Result<()> {
 
     let ms = Migrations::from_directory(&MIGRATIONS_DIR).unwrap();
 
+    log::debug!(
+        "Applying db migrations to version {}...",
+        ms.current_version(conn)?
+    );
     ms.to_latest(conn)?;
 
     Ok(())
