@@ -17,7 +17,8 @@ impl FeatDb {
         let dbpath = dbpath.as_ref();
         log::debug!("opening db {:?}", dbpath.display());
         dbpath.parent_anyhow()?.create_dir_all_anyhow()?;
-        let conn = Connection::open(dbpath)?;
+        let mut conn = Connection::open(dbpath)?;
+        migrate(&mut conn)?;
         Ok(FeatDb { conn })
     }
 
@@ -27,4 +28,17 @@ impl FeatDb {
         txn.commit()?;
         Ok(())
     }
+}
+
+fn migrate(conn: &mut Connection) -> Result<()> {
+    use include_dir::{include_dir, Dir};
+    use rusqlite_migration::Migrations;
+
+    static MIGRATIONS_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/src/db/migrations");
+
+    let ms = Migrations::from_directory(&MIGRATIONS_DIR).unwrap();
+
+    ms.to_latest(conn)?;
+
+    Ok(())
 }
