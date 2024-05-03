@@ -1,10 +1,11 @@
+mod cli2db;
 mod dbpath;
 
 use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
 
-use crate::cli::RunWithDb;
 use crate::db::FeatDb;
+use crate::model::Updatable;
 
 pub use self::dbpath::DbPath;
 
@@ -26,8 +27,8 @@ impl Options {
     }
 
     pub fn run(self) -> Result<()> {
-        let db = FeatDb::open_or_init(&self.dbpath)?;
-        self.command.run_with_db(db)
+        let mut db = FeatDb::open_or_init(&self.dbpath)?;
+        db.apply(self.command)
     }
 }
 

@@ -1,8 +1,12 @@
+mod txn;
+
 use std::path::Path;
 
 use anyhow::Result;
 use anyhow_std::PathAnyhow;
 use rusqlite::Connection;
+
+pub use self::txn::FeatTransaction;
 
 #[derive(Debug)]
 pub struct FeatDb {
@@ -22,11 +26,9 @@ impl FeatDb {
         Ok(FeatDb { conn })
     }
 
-    pub fn task_new(&mut self, title: &str) -> Result<()> {
-        let txn = self.conn.transaction()?;
-        txn.execute("INSERT INTO action_task_new(title) VALUES (?1)", [title])?;
-        txn.commit()?;
-        Ok(())
+    pub fn transaction(&mut self) -> Result<FeatTransaction> {
+        let inner = self.conn.transaction()?;
+        Ok(FeatTransaction::new(inner))
     }
 }
 
