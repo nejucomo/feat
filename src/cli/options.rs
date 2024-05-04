@@ -27,6 +27,8 @@ impl Options {
 
     pub fn run(self) -> Result<()> {
         let mut db = FeatDb::open_or_init(&self.dbpath)?;
-        db.apply(self.command)
+        let key = db.apply(self.command)?;
+        println!("{key}");
+        Ok(())
     }
 }

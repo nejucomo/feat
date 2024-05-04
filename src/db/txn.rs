@@ -53,7 +53,9 @@ impl<'conn> FeatTransaction<'conn> {
 }
 
 impl<'conn> Updatable<Action> for FeatTransaction<'conn> {
-    fn apply(&mut self, action: Action) -> Result<()> {
-        action.insert(self).map(|_| ())
+    type Output = SqlKey;
+
+    fn apply(&mut self, action: Action) -> Result<SqlKey> {
+        action.insert(self)
     }
 }

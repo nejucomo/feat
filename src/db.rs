@@ -46,10 +46,12 @@ impl FeatDb {
 }
 
 impl Updatable<Action> for FeatDb {
-    fn apply(&mut self, action: Action) -> Result<()> {
+    type Output = SqlKey;
+
+    fn apply(&mut self, action: Action) -> Result<SqlKey> {
         let mut txn = self.transaction()?;
-        txn.apply(action)?;
+        let key = txn.apply(action)?;
         txn.commit()?;
-        Ok(())
+        Ok(key)
     }
 }
