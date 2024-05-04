@@ -13,17 +13,35 @@ impl<'conn> FeatTransaction<'conn> {
         FeatTransaction(inner)
     }
 
+    pub fn execute_zero<S, P>(&self, sql: S, params: P) -> Result<SqlKey>
+    where
+        S: AsRef<str>,
+        P: Params,
+    {
+        self.execute_n(0, sql, params)
+    }
+
     pub fn execute_one<S, P>(&self, sql: S, params: P) -> Result<SqlKey>
     where
         S: AsRef<str>,
         P: Params,
     {
-        let updated = self.0.execute(sql.as_ref(), params)?;
-        if updated == 1 {
+        self.execute_n(1, sql, params)
+    }
+
+    fn execute_n<S, P>(&self, expected_rows: usize, sql: S, params: P) -> Result<SqlKey>
+    where
+        S: AsRef<str>,
+        P: Params,
+    {
+        let sql = sql.as_ref();
+        log::debug!("Executing SQL:\n  {sql}");
+        let updated = self.0.execute(sql, params)?;
+        if updated == expected_rows {
             Ok(self.0.last_insert_rowid())
         } else {
             bail!(
-                "SQL postcondition error: expected a single update, found {updated} rows updated"
+                "SQL postcondition error: expected to update {expected_rows} rows, but actually updated {updated} rows"
             );
         }
     }

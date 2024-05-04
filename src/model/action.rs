@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::{Args, Subcommand};
 use name_variant::NamedVariant;
-use rusqlite::params;
+use rusqlite::{params, ToSql};
 
 use crate::db::{
     FeatTransaction, Orm, OrmEntity, OrmLinked, SqlKey,
@@ -36,32 +36,22 @@ impl Orm for Action {
     fn create_dependency_tables(txn: &FeatTransaction) -> anyhow::Result<()> {
         ActionTask::create_tables(txn)
     }
+
+    fn insert_dependents(&self, txn: &FeatTransaction, self_id: SqlKey) -> Result<()> {
+        use Action::*;
+
+        match self {
+            Task(x) => x.insert_linked(txn, self_id).map(|_| ()),
+        }
+    }
 }
 
 impl OrmEntity for Action {
-    fn insert(&self, txn: &FeatTransaction) -> Result<SqlKey> {
-        use Action::*;
-
-        let (param_names, placeholders): (Vec<_>, Vec<_>) = Self::column_schema()
-            .into_iter()
-            .enumerate()
-            .map(|(ix, (name, _))| (name, format!("&{ix}")))
-            .unzip();
-
-        let stmt = format!(
-            "INSERT INTO {:?} (\n  {}) VALUES ({})",
-            Self::table_name(),
-            param_names.join(",\n  "),
-            placeholders.join(", ")
-        );
-
-        let action_id = txn.execute_one(stmt, params![self.discriminant_name()])?;
-
-        match self {
-            Task(x) => x.insert_linked(txn, action_id)?,
-        };
-
-        Ok(action_id)
+    fn with_entity_params<F, R>(&self, f: F) -> R
+    where
+        F: FnOnce(&[&dyn ToSql]) -> R,
+    {
+        f(params![self.discriminant_name()])
     }
 }
 
@@ -76,33 +66,25 @@ impl Orm for ActionTask {
     fn create_dependency_tables(txn: &FeatTransaction) -> anyhow::Result<()> {
         ActionTaskSetTitle::create_tables(txn)
     }
-}
 
-impl OrmLinked for ActionTask {
-    fn insert_linked(&self, txn: &FeatTransaction, action: SqlKey) -> Result<SqlKey> {
+    fn insert_dependents(&self, txn: &FeatTransaction, self_id: SqlKey) -> Result<()> {
         use ActionTask::*;
-
-        let (param_names, placeholders): (Vec<_>, Vec<_>) = Self::column_schema()
-            .into_iter()
-            .enumerate()
-            .map(|(ix, (name, _))| (name, format!("&{ix}")))
-            .unzip();
-
-        let stmt = format!(
-            "INSERT INTO {:?} (\n  {}) VALUES ({})",
-            Self::table_name(),
-            param_names.join(",\n  "),
-            placeholders.join(", ")
-        );
-
-        let actiontask_id = txn.execute_one(stmt, params![action, self.discriminant_name()])?;
 
         match self {
             Create => {}
-            SetTitle(x) => x.insert_linked(txn, actiontask_id).map(|_| ())?,
+            SetTitle(x) => x.insert_linked(txn, self_id).map(|_| ())?,
         };
 
-        Ok(actiontask_id)
+        Ok(())
+    }
+}
+
+impl OrmLinked for ActionTask {
+    fn with_entity_linked_params<F, R>(&self, action_id: SqlKey, f: F) -> R
+    where
+        F: FnOnce(&[&dyn ToSql]) -> R,
+    {
+        f(params![action_id, self.discriminant_name()])
     }
 }
 
@@ -116,20 +98,10 @@ impl Orm for ActionTaskSetTitle {
 }
 
 impl OrmLinked for ActionTaskSetTitle {
-    fn insert_linked(&self, txn: &FeatTransaction, actiontask: SqlKey) -> Result<SqlKey> {
-        let (param_names, placeholders): (Vec<_>, Vec<_>) = Self::column_schema()
-            .into_iter()
-            .enumerate()
-            .map(|(ix, (name, _))| (name, format!("&{ix}")))
-            .unzip();
-
-        let stmt = format!(
-            "INSERT INTO {:?} (\n  {}) VALUES ({})",
-            Self::table_name(),
-            param_names.join(",\n  "),
-            placeholders.join(", ")
-        );
-
-        txn.execute_one(stmt, params![actiontask, self.title])
+    fn with_entity_linked_params<F, R>(&self, actiontask_id: SqlKey, f: F) -> R
+    where
+        F: FnOnce(&[&dyn ToSql]) -> R,
+    {
+        f(params![actiontask_id, self.title])
     }
 }
