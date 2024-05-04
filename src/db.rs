@@ -1,4 +1,3 @@
-mod coldef;
 mod orm;
 mod txn;
 
@@ -10,8 +9,7 @@ use rusqlite::Connection;
 
 use crate::model::{Action, Updatable};
 
-pub use self::coldef::SqlType;
-pub use self::orm::{Orm, OrmEntity, OrmLinked};
+pub use self::orm::{Orm, OrmEntity, OrmLinked, OrmType};
 pub use self::txn::FeatTransaction;
 
 pub type SqlKey = i64;

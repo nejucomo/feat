@@ -4,8 +4,9 @@ use name_variant::NamedVariant;
 use rusqlite::{params, ToSql};
 
 use crate::db::{
-    FeatTransaction, Orm, OrmEntity, OrmLinked, SqlKey,
-    SqlType::{self, ForeignKeyId, Text},
+    FeatTransaction, Orm, OrmEntity, OrmLinked,
+    OrmType::{self, ForeignKeyId, Text},
+    SqlKey,
 };
 use crate::DiscriminantName;
 
@@ -29,7 +30,7 @@ pub struct ActionTaskSetTitle {
 }
 
 impl Orm for Action {
-    fn column_schema() -> Vec<(&'static str, SqlType)> {
+    fn column_schema() -> Vec<(&'static str, OrmType)> {
         vec![("discriminant", Text)]
     }
 
@@ -56,7 +57,7 @@ impl OrmEntity for Action {
 }
 
 impl Orm for ActionTask {
-    fn column_schema() -> Vec<(&'static str, SqlType)> {
+    fn column_schema() -> Vec<(&'static str, OrmType)> {
         vec![
             ("action_id", ForeignKeyId(Action::table_name())),
             ("discriminant", Text),
@@ -89,7 +90,7 @@ impl OrmLinked for ActionTask {
 }
 
 impl Orm for ActionTaskSetTitle {
-    fn column_schema() -> Vec<(&'static str, SqlType)> {
+    fn column_schema() -> Vec<(&'static str, OrmType)> {
         vec![
             ("actiontask_id", ForeignKeyId(ActionTask::table_name())),
             ("title", Text),

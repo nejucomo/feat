@@ -1,8 +1,12 @@
+mod ormtype;
+
 use anyhow::Result;
 use indoc::indoc;
 use rusqlite::ToSql;
 
-use super::{FeatTransaction, SqlKey, SqlType};
+pub use self::ormtype::OrmType;
+
+use super::{FeatTransaction, SqlKey};
 
 pub trait Orm {
     // consumer methods:
@@ -13,7 +17,7 @@ pub trait Orm {
     }
 
     // implementor methods:
-    fn column_schema() -> Vec<(&'static str, SqlType)>;
+    fn column_schema() -> Vec<(&'static str, OrmType)>;
 
     fn create_dependency_tables(txn: &FeatTransaction) -> Result<()> {
         let _ = txn;
