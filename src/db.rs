@@ -1,3 +1,5 @@
+mod coldef;
+mod orm;
 mod txn;
 
 use std::path::Path;
@@ -6,7 +8,13 @@ use anyhow::Result;
 use anyhow_std::PathAnyhow;
 use rusqlite::Connection;
 
+use crate::model::{Action, Updatable};
+
+pub use self::coldef::SqlType;
+pub use self::orm::{Orm, OrmEntity, OrmLinked};
 pub use self::txn::FeatTransaction;
+
+pub type SqlKey = i64;
 
 #[derive(Debug)]
 pub struct FeatDb {
@@ -21,9 +29,14 @@ impl FeatDb {
         let dbpath = dbpath.as_ref();
         log::debug!("opening db {:?}", dbpath.display());
         dbpath.parent_anyhow()?.create_dir_all_anyhow()?;
-        let mut conn = Connection::open(dbpath)?;
-        migrate(&mut conn)?;
-        Ok(FeatDb { conn })
+        let conn = Connection::open(dbpath)?;
+        let mut myself = FeatDb { conn };
+
+        let txn = myself.transaction()?;
+        Action::create_tables(&txn)?;
+        txn.commit()?;
+
+        Ok(myself)
     }
 
     pub fn transaction(&mut self) -> Result<FeatTransaction> {
@@ -32,19 +45,11 @@ impl FeatDb {
     }
 }
 
-fn migrate(conn: &mut Connection) -> Result<()> {
-    use include_dir::{include_dir, Dir};
-    use rusqlite_migration::Migrations;
-
-    static MIGRATIONS_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/src/db/migrations");
-
-    let ms = Migrations::from_directory(&MIGRATIONS_DIR).unwrap();
-
-    log::debug!(
-        "Applying db migrations to version {}...",
-        ms.current_version(conn)?
-    );
-    ms.to_latest(conn)?;
-
-    Ok(())
+impl Updatable<Action> for FeatDb {
+    fn apply(&mut self, action: Action) -> Result<()> {
+        let mut txn = self.transaction()?;
+        txn.apply(action)?;
+        txn.commit()?;
+        Ok(())
+    }
 }

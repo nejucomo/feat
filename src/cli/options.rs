@@ -1,11 +1,10 @@
-mod cli2db;
 mod dbpath;
 
 use anyhow::Result;
-use clap::{Args, Parser, Subcommand};
+use clap::Parser;
 
 use crate::db::FeatDb;
-use crate::model::Updatable;
+use crate::model::{Action, Updatable};
 
 pub use self::dbpath::DbPath;
 
@@ -18,7 +17,7 @@ pub struct Options {
     pub dbpath: DbPath,
 
     #[clap(subcommand)]
-    pub command: Command,
+    pub command: Action,
 }
 
 impl Options {
@@ -30,20 +29,4 @@ impl Options {
         let mut db = FeatDb::open_or_init(&self.dbpath)?;
         db.apply(self.command)
     }
-}
-
-#[derive(Debug, Subcommand)]
-pub enum Command {
-    #[clap(subcommand)]
-    Task(CommandTask),
-}
-
-#[derive(Debug, Subcommand)]
-pub enum CommandTask {
-    New(CommandTaskNew),
-}
-
-#[derive(Debug, Args)]
-pub struct CommandTaskNew {
-    pub title: String,
 }
