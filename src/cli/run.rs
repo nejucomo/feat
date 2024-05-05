@@ -9,20 +9,7 @@ pub fn run() -> Result<(), Report<Ref<Error>>> {
 
 fn run_inner() -> Result<()> {
     let options = Options::parse();
-    init_logging()?;
+    crate::logging::init()?;
     log::debug!("parsed options {:?}", &options);
     options.run()
-}
-
-fn init_logging() -> Result<()> {
-    use simplelog::{ColorChoice, Config, LevelFilter, TermLogger, TerminalMode};
-
-    TermLogger::init(
-        LevelFilter::Debug,
-        Config::default(),
-        TerminalMode::Stderr,
-        ColorChoice::Auto,
-    )?;
-
-    Ok(())
 }

@@ -19,4 +19,5 @@ rusqlite_migration = { version = "1.2.0", features = ["from-directory"] }
 simplelog = "0.12.2"
 
 [dev-dependencies]
+tempfile = "3.10.1"
 test-case = "3.3.1"
