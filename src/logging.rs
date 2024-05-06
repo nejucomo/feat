@@ -1,13 +1,9 @@
 use anyhow::Result;
-use simplelog::{ColorChoice, Config, LevelFilter, TermLogger, TerminalMode};
+use log::LevelFilter;
 
 pub(crate) fn init() -> Result<()> {
-    TermLogger::init(
-        LevelFilter::Debug,
-        Config::default(),
-        TerminalMode::Stderr,
-        ColorChoice::Auto,
-    )?;
-
+    env_logger::builder()
+        .filter_level(LevelFilter::Debug)
+        .try_init()?;
     Ok(())
 }
