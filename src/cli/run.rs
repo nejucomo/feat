@@ -9,6 +9,7 @@ pub fn run() -> Result<(), Report<Ref<Error>>> {
 
 fn run_inner() -> Result<()> {
     let options = Options::parse();
+    #[cfg(not(test))]
     crate::logging::init()?;
     log::debug!("parsed options {:?}", &options);
     options.run()

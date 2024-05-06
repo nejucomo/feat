@@ -13,7 +13,7 @@ use crate::{
 
 #[test]
 fn new_task_with_title() -> Result<()> {
-    crate::logging::init()?;
+    crate::logging::test_init()?;
 
     let dbpath = tempfile::Builder::new()
         .prefix("testdata.")
