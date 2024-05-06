@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use anyhow::Result;
 
 use crate::{
@@ -15,11 +13,12 @@ use crate::{
 fn new_task_with_title() -> Result<()> {
     crate::logging::test_init()?;
 
-    let dbpath = tempfile::Builder::new()
-        .prefix("testdata.")
-        .tempdir_in(Path::new(env!("CARGO_MANIFEST_DIR")).join("target"))?
-        .into_path()
-        .join("db.sqlite");
+    let testdir = tempfile::Builder::new()
+        .prefix(&format!("{}.", env!("CARGO_PKG_NAME")))
+        .suffix(".testdata")
+        .tempdir()?;
+
+    let dbpath = testdir.as_ref().join("db.sqlite");
 
     let mut db = FeatDb::open_or_init(&dbpath)?;
 

@@ -1,0 +1,24 @@
+[package]
+name = "feat"
+description = "local-first cli task tracking"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+anyhow-std.workspace = true
+clap.workspace = true
+dirs.workspace = true
+env_logger.workspace = true
+error-report.workspace = true
+include_dir.workspace = true
+indoc.workspace = true
+log.workspace = true
+name-variant.workspace = true
+rusqlite.workspace = true
+rusqlite_migration.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+test-case.workspace = true
+
