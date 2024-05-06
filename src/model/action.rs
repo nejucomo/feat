@@ -34,11 +34,11 @@ impl Orm for Action {
         vec![("discriminant", Text)]
     }
 
-    fn create_dependency_tables(txn: &FeatTransaction) -> anyhow::Result<()> {
+    fn create_linking_tables(txn: &FeatTransaction) -> anyhow::Result<()> {
         ActionTask::create_tables(txn)
     }
 
-    fn insert_dependents(&self, txn: &FeatTransaction, self_id: SqlKey) -> Result<()> {
+    fn insert_linking_values(&self, txn: &FeatTransaction, self_id: SqlKey) -> Result<()> {
         use Action::*;
 
         match self {
@@ -64,11 +64,11 @@ impl Orm for ActionTask {
         ]
     }
 
-    fn create_dependency_tables(txn: &FeatTransaction) -> anyhow::Result<()> {
+    fn create_linking_tables(txn: &FeatTransaction) -> anyhow::Result<()> {
         ActionTaskSetTitle::create_tables(txn)
     }
 
-    fn insert_dependents(&self, txn: &FeatTransaction, self_id: SqlKey) -> Result<()> {
+    fn insert_linking_values(&self, txn: &FeatTransaction, self_id: SqlKey) -> Result<()> {
         use ActionTask::*;
 
         match self {

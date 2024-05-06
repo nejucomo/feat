@@ -11,20 +11,20 @@ use super::{FeatTransaction, SqlKey};
 pub trait Orm {
     // consumer methods:
     fn create_tables(txn: &FeatTransaction) -> Result<()> {
-        Self::create_dependency_tables(txn)?;
         txn.execute_zero(Self::create_table_statement(), [])?;
+        Self::create_linking_tables(txn)?;
         Ok(())
     }
 
     // implementor methods:
     fn column_schema() -> Vec<(&'static str, OrmType)>;
 
-    fn create_dependency_tables(txn: &FeatTransaction) -> Result<()> {
+    fn create_linking_tables(txn: &FeatTransaction) -> Result<()> {
         let _ = txn;
         Ok(())
     }
 
-    fn insert_dependents(&self, txn: &FeatTransaction, self_id: SqlKey) -> Result<()> {
+    fn insert_linking_values(&self, txn: &FeatTransaction, self_id: SqlKey) -> Result<()> {
         let _ = (txn, self_id);
         Ok(())
     }
@@ -73,7 +73,7 @@ pub trait OrmEntity: Orm {
         let self_id =
             self.with_entity_params(|params| txn.execute_one(self.insert_statement(), params))?;
 
-        self.insert_dependents(txn, self_id)?;
+        self.insert_linking_values(txn, self_id)?;
         Ok(self_id)
     }
 
@@ -90,7 +90,7 @@ pub trait OrmLinked: Orm {
             txn.execute_one(self.insert_statement(), params)
         })?;
 
-        self.insert_dependents(txn, self_id)?;
+        self.insert_linking_values(txn, self_id)?;
         Ok(self_id)
     }
 
