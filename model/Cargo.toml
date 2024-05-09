@@ -1,0 +1,8 @@
+[package]
+name = "feat-model"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+rand.workspace = true

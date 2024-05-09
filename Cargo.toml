@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
   "legacy",
+  "model",
 ]
 
 [workspace.package]
@@ -19,6 +20,7 @@ include_dir = "0.7.3"
 indoc = "2.0.5"
 log = "0.4.21"
 name-variant = "0.1.0"
+rand = "0.8.5"
 rusqlite_migration = { version = "1.2.0", features = ["from-directory"] }
 rusqlite = { version = "0.31.0", features = ["bundled"] }
 tempfile = "3.10.1"
