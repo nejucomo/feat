@@ -29,6 +29,7 @@ macro_rules! def_state_impl_tests {
                          assert_eq!(1, s.all_tasks().count());
                          Ok(())
                     }
+                    ; "task_create"
                 )]
         fn $basename<S, M, T, P>(mkstate: M, msg: T, pred: P) -> anyhow::Result<()>
         where
