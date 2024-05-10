@@ -3,6 +3,13 @@ name = "feat-model"
 version.workspace = true
 edition.workspace = true
 
+[features]
+testutil = ["test-case"]
+
 [dependencies]
 anyhow.workspace = true
 rand.workspace = true
+test-case = { workspace = true, optional = true }
+
+[dev-dependencies]
+test-case.workspace = true
