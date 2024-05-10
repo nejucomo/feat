@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
   "legacy",
+  "memstate",
   "model",
 ]
 
@@ -16,6 +17,7 @@ clap = { version = "4.5.4", features = ["derive"] }
 dirs = "5.0.1"
 env_logger = "0.11.3"
 error-report = "0.0.1"
+feat-model = { path = "model" }
 include_dir = "0.7.3"
 indoc = "2.0.5"
 log = "0.4.21"

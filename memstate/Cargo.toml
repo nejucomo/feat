@@ -1,0 +1,13 @@
+[package]
+name = "feat-memstate"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+feat-model.workspace = true
+rand.workspace = true
+
+[dev-dependencies]
+feat-model = { workspace = true, features = ["testutil"] }
+test-case.workspace = true

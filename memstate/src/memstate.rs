@@ -1,12 +1,9 @@
 use std::collections::BTreeMap;
 
 use anyhow::{anyhow, Result};
+use feat_model::action::task::{Create as TaskCreate, SetTitle as TaskSetTitle};
+use feat_model::{State, Task, Unique, Updatable};
 use rand::rngs::StdRng;
-
-use crate::action::task::{Create as TaskCreate, SetTitle as TaskSetTitle};
-use crate::{Unique, Updatable};
-
-use super::{State, Task};
 
 #[derive(Debug)]
 pub struct MemState {

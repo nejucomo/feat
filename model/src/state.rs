@@ -1,11 +1,9 @@
-mod mem;
 mod task;
 
 use std::fmt::Debug;
 
 use crate::{action, Unique, Updatable};
 
-pub use self::mem::MemState;
 pub use self::task::Task;
 
 pub trait State:
