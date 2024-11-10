@@ -20,6 +20,7 @@ where
     Ok(())
 }
 
+#[rustfmt::skip]
 #[macro_export]
 macro_rules! def_state_impl_tests {
     ( $basename:ident, $mk_state:expr ) => {

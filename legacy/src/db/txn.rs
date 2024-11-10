@@ -52,7 +52,7 @@ impl<'conn> FeatTransaction<'conn> {
     }
 }
 
-impl<'conn> Updatable<Action> for FeatTransaction<'conn> {
+impl Updatable<Action> for FeatTransaction<'_> {
     type Output = SqlKey;
 
     fn apply(&mut self, action: Action) -> Result<SqlKey> {
